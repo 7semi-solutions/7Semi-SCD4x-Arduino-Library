@@ -15,15 +15,14 @@ This Arduino library provides support for the 7Semi-SCD4x (SCD40/SCD41) sensor m
 - I2C connection (SDA, SCL)
 
 ## Getting Started
-
+ 
   ### 1. Library Installation
-  
-  - Download or clone the repository.
-  
-  - Copy the files `7semi_scd4x.cpp` and `7semi_scd4x.h` into a folder named `7semi_SCD4x` under your Arduino `libraries` directory.
-  
-  - Restart the Arduino IDE.
+ 
+      - Download or clone the repository.
 
+      - Copy the files `7semi_hmc6343.cpp` and `7semi_hmc6343.h` into a folder named `7semi_HMC6343` under your Arduino `libraries/` directory.
+
+      - Restart the Arduino IDE.
 ---
 
 ### 2. Wiring
