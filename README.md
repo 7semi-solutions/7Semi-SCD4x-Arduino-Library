@@ -1,58 +1,44 @@
-# 7Semi-SCD4x-Arduino-Library
-Arduino library for 7Semi SCD4x (SCD40/SCD41) CO₂, temperature, and humidity sensors using I2C 
+# 7Semi-SCD4x-CO₂-Temperature-Humidity-Sensor-Module-I2C-Arduino-Library
 
-![Arduino](https://img.shields.io/badge/platform-arduino-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Status](https://img.shields.io/badge/status-active-brightgreen.svg)
+This Arduino library provides support for the 7Semi-SCD4x (SCD40/SCD41) sensor module over I2C. It enables real-time measurement of **CO₂ (ppm)**, **temperature (°C)**, and **humidity (%)**, and supports both continuous and single-shot measurement modes. The library also includes CRC8 validation and optional data-ready status polling.
 
-Official Arduino library for the **7Semi SCD4x series** (SCD40 / SCD41) CO₂, Temperature, and Humidity sensors.
+![platform](https://img.shields.io/badge/platform-arduino-blue.svg)
+![license](https://img.shields.io/badge/license-MIT-green.svg)
+![status](https://img.shields.io/badge/status-active-brightgreen.svg)
 
-Built for seamless integration with Arduino-compatible boards using I2C communication.
 
----
 
-## 🌟 Features
+## Hardware Required
 
-- 📡 CO₂ (ppm), Temperature (°C), and Humidity (%) readings
-- 🔁 Continuous and single-shot measurement modes
-- ✅ CRC8 error checking
-- 🔄 Data ready status polling
-- ⏱ Configurable measurement intervals
-- 💡 Ready-to-use Arduino examples
-- 🧰 Clean and lightweight C++ implementation
+- SCD40 or SCD41 sensor module  
+- Arduino-compatible board  
+- I2C connection (SDA, SCL)
 
----
+## Getting Started
 
-## 📦 Supported Devices
+### 1. Library Installation
 
-- **SCD40** – Compact, low-power CO₂ sensor  
-- **SCD41** – Extended measurement range and auto-altitude compensation  
+- Download or clone the repository.
+
+- Copy the files `7semi_scd4x.cpp` and `7semi_scd4x.h` into a folder named `7semi_SCD4x` under your Arduino `libraries` directory.
+
+- Restart the Arduino IDE.
 
 ---
 
-## 🧰 Installation
+### 2. Wiring
 
-### Option 1: Arduino Library Manager
-- Open Arduino IDE → Tools → Manage Libraries...
-- Search for **7Semi SCD4x**
-- Click **Install**
+| SCD4x Pin | Arduino Pin |
+|-----------|--------------|
+| SDA       | A4 (Uno)     |
+| SCL       | A5 (Uno)     |
+| VCC       | 3.3V / 5V    |
+| GND       | GND          |
 
-### Option 2: Manual ZIP Installation
-- Download this repository as a `.zip`
-- Open Arduino IDE → `Sketch` → `Include Library` → `Add .ZIP Library...`
+> Default I2C address: `0x62`  
 
----
 
-## 🔌 I2C Connection
 
-| SCD4x Pin | Arduino Pin (UNO) |
-|-----------|-------------------|
-| VCC       | 3.3V / 5V         |
-| GND       | GND               |
-| SDA       | A4                |
-| SCL       | A5                |
-
-> Default I2C address: `0x62`
 
 ---
 
