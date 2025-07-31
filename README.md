@@ -45,12 +45,12 @@ Built for seamless integration with Arduino-compatible boards using I2C communic
 
 ## 🔌 I2C Connection
 
-| SCD4x Pin | Arduino Pin (UNO) | Notes                  |
-|-----------|-------------------|------------------------|
-| VCC       | 3.3V / 5V         | Depending on board     |
-| GND       | GND               |                        |
-| SDA       | A4                | Use level shifter if needed |
-| SCL       | A5                |                        |
+| SCD4x Pin | Arduino Pin (UNO) |
+|-----------|-------------------|
+| VCC       | 3.3V / 5V         |
+| GND       | GND               |
+| SDA       | A4                |
+| SCL       | A5                |
 
 > Default I2C address: `0x62`
 
