@@ -35,11 +35,3 @@ This Arduino library provides support for the 7Semi-SCD4x (SCD40/SCD41) sensor m
 | GND       | GND          |
 
 > Default I2C address: `0x62`  
-
-
-
-
----
-
-## 📂 Folder Structure
-
