@@ -10,7 +10,7 @@ This Arduino library provides support for the 7Semi-SCD4x (SCD40/SCD41) sensor m
 
 ## Hardware Required
 
-- SCD40 or SCD41 sensor module  
+- 7Semi SCD40 or SCD41 sensor module  
 - Arduino-compatible board  
 - I2C connection (SDA, SCL)
 
