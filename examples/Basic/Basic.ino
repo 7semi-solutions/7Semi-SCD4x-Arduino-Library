@@ -21,6 +21,7 @@
  */
 
 #include <7semi_SCD40.h>
+#include <Wire.h>
 
 SCD40 scdSensor;
 
