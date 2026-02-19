@@ -1,58 +1,114 @@
-/*!
- * @file SCD40_Sample.ino
- * @brief Example for reading CO₂, temperature, and humidity from SCD40 sensor using 7semi_SCD40 wrapper library.
- *
- * This example uses the Sensirion SCD40 sensor via the 7semi_SCD40 Arduino library.
- * The library internally uses the official Sensirion I2C driver for SCD4x (SCD40/SCD41),
- * with wrapper functions for easy initialization and single-shot readout.
- *
- *  NOTE:
- * - SCD40 does NOT measure pressure; ambient pressure must be set manually for compensation.
- * - The sensor supports single-shot and periodic modes. This example uses single-shot mode.
- *
- *  Library credits:
- * - Sensirion official driver (https://github.com/Sensirion/embedded-scd)
- * - Arduino wrapper by 7semi 
- *
- *  Sensor specs:
- * - CO₂ accuracy: ±(40 ppm + 5%)
- * - Temp/Humidity accuracy: ±0.8 °C / ±3% RH
- * - Update rate: minimum 5 seconds (single-shot or periodic)
- */
-
-#include <7semi_SCD40.h>
-#include <Wire.h>
-
-SCD40 scdSensor;
-
+/***************************************************************
+* Basic.ino
+* Example for using the 7Semi SCD4x CO₂, temperature,
+*          and humidity sensor with I²C on ESP32/Arduino.
+*
+* Features demonstrated:
+* - Start/stop of standard periodic measurement
+* - Reading CO₂ (ppm), temperature (°C), and humidity (%RH)
+* - Notes on single-shot mode, offsets, and airflow considerations
+*
+* Sensor configuration used:
+* - Periodic Mode : Standard (2 s polling)
+* - I²C Frequency : 100 kHz (recommended for bring-up)
+* - Supply Voltage: 3.3V–5.5V (module dependent)
+* - Data Output   : CO₂ (ppm), Temperature (°C), RH (%)
+*
+* Connections:
+* - SDA -> A4 Default board SDA (or define custom pin)
+* - SCL -> A5 Default board SCL (or define custom pin)
+* - VIN -> 3.3V / 5V (depending on module)
+* - GND -> GND
+*
+* @author   7Semi
+* @license  MIT
+* @version  1.0
+* @date     24 September 2025
+***************************************************************/
+ 
+#include <7Semi_SCD4x.h>
+ 
+// I2C speed for bring-up (100 kHz recommended; raise later if stable)
+#define I2C_FREQ_HZ 100000UL
+ 
+// Set to -1 to use board defaults
+#define I2C_SDA_PIN -1
+#define I2C_SCL_PIN -1
+ 
+// Polling period while in periodic modes
+#define POLL_MS 2000UL
+ 
+SCD4x_7Semi scd(&Wire);
+ 
+uint32_t lastPoll = 0;
+bool running = false;
+bool lowPower = false;
+ 
 void setup() {
   Serial.begin(115200);
-  // Initialize the sensor and verify serial number
-  if (scdSensor.begin()) {
-    Serial.println(" SCD40 sensor initialized.");
+  while (!Serial) {}
+ 
+  Serial.println(F("\n== 7Semi SCD4x =="));
+ 
+  while (!scd.begin(I2C_SDA_PIN, I2C_SCL_PIN, I2C_FREQ_HZ)) {
+    Serial.println(F("SCD4x not detected. Check wiring/power."));
+    delay(1000);
+  }
+ 
+  // Start in standard periodic mode by default
+  if (scd.startPeriodicMeasurement()) {
+    running = true;
+    lowPower = false;
+    Serial.println(F("Started standard periodic mode. First valid reading ~5s."));
   } else {
-    Serial.println(" SCD40 sensor failed to initialize.");
-    while (1);  // Stop here on failure
+    Serial.println(F("failed to start periodic mode."));
   }
 }
-
+ 
+/**
+- Poll data-ready every 2 s
+- When ready, read CO₂ (ppm), temperature (°C), humidity (%RH)
+- Prints values to Serial (with basic formatting)
+*/
 void loop() {
-  uint16_t co2;
-  float temp, rh;
-
-  // Read one single-shot measurement from SCD40
-  if (scdSensor.readSingleShot(co2, temp, rh)) {
-    Serial.print("CO2: ");
-    Serial.print(co2);
-    Serial.print(" ppm | Temp: ");
-    Serial.print(temp, 2);
-    Serial.print(" °C | RH: ");
-    Serial.print(rh, 2);
-    Serial.println(" %");
-  } else {
-    Serial.println(" Failed to read measurement from SCD40.");
+  static uint32_t lastCheck = 0;
+  if (millis() - lastCheck < 2000) return;  // every 2 s
+  lastCheck = millis();
+ 
+  uint16_t ready = 0;
+  // Bit 10..0 used as "new data available" in many Sensirion examples
+  if (scd.getDataReadyStatus(ready) && (ready & 0x07FF)) {
+    uint16_t co2;
+    float temp, rh;
+ 
+    if (scd.readMeasurement(co2, temp, rh)) {
+      Serial.print("CO₂: ");
+      Serial.print(co2);
+      Serial.print(" ppm\t");
+ 
+      Serial.print("Temp: ");
+      Serial.print(temp, 2);
+      Serial.print(" °C\t");
+ 
+      Serial.print("RH: ");
+      Serial.print(rh, 1);
+      Serial.println(" %");
+    } else {
+      Serial.println("Read failed (CRC/I2C error)");
+    }
   }
-
-  delay(5000);  // Must wait at least 5 seconds between reads
 }
-
+ 
+/* ===================== Notes =====================
+- If you never see data ready:
+   * Re-check wiring, pull-ups, and I²C pins for your board.
+   * Try 100 kHz I²C during bring-up.
+   * Ensure stable power; SCD4x can run from 3.3–5.5 V depending on module.
+ 
+- If values look offset:
+   * Consider setTemperatureOffset() to compensate board self-heating.
+   * Avoid strong airflow directly on the sensor.
+ 
+- If you need single-shot mode:
+   * Use measureSingleShot()/measureSingleShotRhtOnly() and then readMeasurement().
+=================================================== */
