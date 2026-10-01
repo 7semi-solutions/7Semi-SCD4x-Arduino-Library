@@ -50,7 +50,7 @@ void setup() {
  
   Serial.println(F("\n== 7Semi SCD4x =="));
  
-  while (!scd.begin(I2C_SDA_PIN, I2C_SCL_PIN, I2C_FREQ_HZ)) {
+  while (!scd.begin()) {
     Serial.println(F("SCD4x not detected. Check wiring/power."));
     delay(1000);
   }
